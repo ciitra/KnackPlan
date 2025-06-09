@@ -817,11 +817,25 @@ def jadwalkan_tugas_otomatis(kuliah_hari_ini):
     jadwal = jadwal_knapsack(interval_bebas, tugas_terpilih)
 
     print("📅 Jadwal Otomatis Hari Ini (Knapsack):")
+    acara = []
+
+    for kul in kuliah_hari_ini:
+        mulai = str_ke_waktu(kul['WaktuMulai'])
+        selesai = str_ke_waktu(kul['WaktuSelesai'])
+        acara.append(('Kuliah', kul['NamaMataKuliah'], mulai, selesai))
+
     for sch in jadwal:
-        st = waktu_ke_str(sch['start_time'])
-        et = waktu_ke_str(sch['end_time'])
-        print(f"  [TUGAS] {sch['task']['NamaTugas']} dari {st} sampai {et}")
-    input("Tekan Enter untuk kembali...")
+        acara.append(('Tugas', sch['task']['NamaTugas'], sch['start_time'], sch['end_time']))
+
+    acara.sort(key=lambda x: x[2])
+
+    for ev in acara:
+        st = waktu_ke_str(ev[2])
+        et = waktu_ke_str(ev[3])
+        label = "📘 Kuliah" if ev[0] == 'Kuliah' else "📝 Tugas"
+        print(f"  [{label}] {ev[1]} dari {st} sampai {et}")
+    input("Tekan Enter untuk kembali...")
+
 def knapsack_01(tugas: List[dict], kapasitas_jam: float) -> List[dict]:
     kapasitas = int(kapasitas_jam * 10)
     n = len(tugas)
