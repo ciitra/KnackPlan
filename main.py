@@ -4,7 +4,6 @@ import os
 from datetime import date
 from typing import List, Tuple
 
-
 ######################################################### C O V E R #############################################################
 def clear():
     os.system("cls")
@@ -205,8 +204,6 @@ FILE_TUGAS = 'tugas.csv'
 FILE_MAHASISWA = 'data_mahasiswa.csv' 
 HARI_DALAM_MINGGU = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'] 
 
-#Fungsi: Membaca isi file CSV yang berisi data mahasiswa.
-#Kegunaan: Mengembalikan isi file sebagai list baris. Jika file tidak ditemukan, mencetak pesan dan mengembalikan list kosong.
 def baca_data(FILE_MAHASISWA):
     try:
         with open(FILE_MAHASISWA, mode='r') as file:
@@ -221,8 +218,6 @@ def baca_data(FILE_MAHASISWA):
         return []
 
 
-# Fungsi: Membaca data kuliah dari file CSV FILE_KULIAH.
-# Kegunaan: Mengembalikan list dict kuliah yang sudah diubah strukturnya, misalnya 'IDMataKuliah', 'NamaMataKuliah', dst.
 def muat_kuliah():
     kuliah = []
 
@@ -244,8 +239,6 @@ def muat_kuliah():
 
 kuliah = muat_kuliah()
 
-# Fungsi: Menyimpan list dict kuliah ke file FILE_KULIAH dalam bentuk CSV.
-# Kegunaan: Memperbarui file jadwal kuliah jika ada perubahan/tambahan/hapus.
 def simpan_kuliah(kuliah: List[dict]):
     with open(FILE_KULIAH, 'w', newline='', encoding='utf-8') as file:
         kolom = ['IDMataKuliah', 'NamaMataKuliah', 'Hari', 'WaktuMulai', 'WaktuSelesai']
@@ -261,8 +254,6 @@ def simpan_kuliah(kuliah: List[dict]):
                 k['WaktuSelesai']
             ])
 
-# Fungsi: Membaca file FILE_TUGAS dan mengubah isinya menjadi list dict.
-# Kegunaan: Menyediakan akses ke semua tugas yang tersimpan, termasuk estimasi durasi, tenggat, dan statusnya.
 def muat_tugas():
     tugas = []
 
@@ -284,8 +275,6 @@ def muat_tugas():
 
 tugas = muat_tugas()
 
-# Fungsi: Menulis data list tugas ke file FILE_TUGAS dalam format CSV.
-# Kegunaan: Menyimpan perubahan data tugas seperti penambahan atau update status.
 def simpan_tugas(tugas: List[dict]):
     with open(FILE_TUGAS, 'w', newline='', encoding='utf-8') as file:
         csv_writer = csv.writer(file)
@@ -300,8 +289,6 @@ def simpan_tugas(tugas: List[dict]):
             ])
 
 
-# Fungsi: Menghapus semua tugas yang sudah berstatus “selesai”.
-# Kegunaan: Membersihkan file tugas.csv agar hanya berisi tugas yang belum selesai dikerjakan.
 def bersihkan_tugas_selesai():
     tugas = muat_tugas()
     tugas_baru = []
@@ -310,20 +297,12 @@ def bersihkan_tugas_selesai():
             tugas_baru.append(t)
     simpan_tugas(tugas_baru) 
 
-
-# Fungsi: Mengonversi string waktu (format 'HH:MM') ke objek datetime.time.
-# Kegunaan: Memudahkan perbandingan dan pengurutan waktu.
 def str_ke_waktu(t_str: str):
     return datetime.datetime.strptime(t_str, '%H:%M').time()
     
-# Fungsi: Mengubah objek datetime.time menjadi string dengan format 'HH:MM'.
-# Kegunaan: Memudahkan menampilkan waktu dalam format yang mudah dibaca.
 def waktu_ke_str(t: datetime.time):
     return t.strftime('%H:%M')
 
-
-# Fungsi: Mengambil hari saat ini dalam format bahasa Indonesia.
-# Kegunaan: Digunakan untuk menampilkan atau menyaring jadwal/tugas berdasarkan hari ini.
 def hari_ini():
     hari = datetime.datetime.today().strftime('%A')  
     terjemahan_hari = {
@@ -337,14 +316,10 @@ def hari_ini():
     }
     return terjemahan_hari.get(hari, hari)  
 
-# Fungsi: Menampilkan garis pemisah sepanjang 50 karakter.
-# Kegunaan: Memperindah tampilan menu atau output ke terminal.
 def cetak_garis():
     print('-'*50)  
 
-# Fungsi: Menerima input waktu dari pengguna dan memvalidasinya (format HH:MM).
-# Kegunaan: Menghindari input waktu yang salah oleh pengguna.
-def input_waktu(prompt):
+def input_waktu(prompt: str):
     while True:  
         t = input(prompt + " (HH:MM, format 24h): ")  
         try:
@@ -353,8 +328,6 @@ def input_waktu(prompt):
         except ValueError:
             print("Format waktu tidak valid. Silakan masukkan dalam format HH:MM 24-jam.")  
 
-# Fungsi: Menerima input hari dan memvalidasi apakah termasuk hari dalam seminggu (Senin-Minggu).
-# Kegunaan: Untuk input hari saat menambahkan kuliah atau menjadwalkan tugas.
 def input_hari():
     while True: 
         hari = input("Masukkan hari dalam seminggu (mis. Senin): ").capitalize()  
@@ -362,27 +335,19 @@ def input_hari():
             return hari  
         print("Hari tidak valid. Silakan masukkan nama hari yang valid, mis. Senin.") 
 
-# Fungsi: Menghasilkan ID kuliah baru berdasarkan ID terakhir.
-# Kegunaan: Memberikan ID unik untuk setiap kuliah baru yang ditambahkan.
 def id_kuliah_selanjutnya(kuliah):
     if kuliah:  
         return max(k['IDMataKuliah'] for k in kuliah) + 1  
     return 1  
 
-# Fungsi: Menghasilkan ID tugas baru berdasarkan ID terakhir.
-# Kegunaan: Memberikan ID unik untuk setiap tugas baru.
 def id_tugas_selanjutnya(tugas):
     if tugas:  
         return max(t['IDTugas'] for t in tugas) + 1  
     return 1  
 
-# Fungsi: Mengecek apakah dua waktu bertabrakan atau tidak.
-# Kegunaan: Mencegah bentrok waktu jadwal kuliah atau tugas yang dijadwalkan.
 def tumpang_tindih(start1, end1, start2, end2):
     return not (end1 <= start2 or end2 <= start1)  
 
-# Fungsi: Menampilkan kuliah yang terjadi pada hari tertentu.
-# Kegunaan: Memberikan tampilan terstruktur dan informasi kepada pengguna tentang kuliah hari itu.
 def cetak_kuliah_hari_ini(kuliah, hari):
     print(f"Jadwal Kuliah untuk {hari}:")  
     terfilter = [k for k in kuliah if k['Hari'] == hari]  
@@ -393,6 +358,7 @@ def cetak_kuliah_hari_ini(kuliah, hari):
     for k in terfilter:  
         print(f"  [{k['IDMataKuliah']}] {k['NamaMataKuliah']} dari {k['WaktuMulai']} sampai {k['WaktuSelesai']}")  
     return terfilter 
+
 
 ######################################################## M E N U  D O S E N #################################################################
 def menu_dosen():
@@ -420,12 +386,6 @@ def menu_dosen():
                 clear()
                 tambah_kuliah()
             elif pilih == 3:
-                clear()
-                edit_kuliah()
-            elif pilih == 4:
-                clear()
-                hapus_kuliah()
-            elif pilih == 5:
                 halaman_knackplan()
                 break
             else:
@@ -487,102 +447,6 @@ def tambah_kuliah():
     input("Tekan Enter untuk melanjutkan...")
 
 
-def edit_kuliah():
-    global kuliah
-    while True:
-        try:
-            id_kuliah = int(input("Masukkan ID kuliah untuk diedit: "))
-        except ValueError:
-            print("ID tidak valid.")
-            continue
-
-        kuliah_yang_ditemukan = [k for k in kuliah if k['IDMataKuliah'] == id_kuliah]
-        if not kuliah_yang_ditemukan:
-            print("Kuliah tidak ditemukan.")
-            continue
-
-        kul = kuliah_yang_ditemukan[0]
-        print(f"Mengedit Kuliah [{kul['IDMataKuliah']}] {kul['NamaMataKuliah']} {kul['Hari']} {kul['WaktuMulai']}-{kul['WaktuSelesai']}")
-
-        nama_baru = input(f"Nama kuliah baru (biarkan kosong untuk mempertahankan '{kul['NamaMataKuliah']}'): ").strip()
-        if nama_baru:
-            kul['NamaMataKuliah'] = nama_baru
-
-        hari_baru = input(f"Hari baru (biarkan kosong untuk mempertahankan '{kul['Hari']}'): ").capitalize().strip()
-        if hari_baru:
-            if hari_baru not in HARI_DALAM_MINGGU:
-                print("Hari yang dimasukkan tidak valid. Edit dibatalkan.")
-                continue
-            kul['Hari'] = hari_baru
-
-        waktu_mulai_baru = input(f"Waktu mulai baru (biarkan kosong untuk mempertahankan '{kul['WaktuMulai']}'): ").strip()
-        if waktu_mulai_baru:
-            try:
-                datetime.datetime.strptime(waktu_mulai_baru, '%H:%M')
-                kul['WaktuMulai'] = waktu_mulai_baru
-            except:
-                print("Format waktu tidak valid. Edit dibatalkan.")
-                continue
-
-        waktu_selesai_baru = input(f"Waktu selesai baru (biarkan kosong untuk mempertahankan '{kul['WaktuSelesai']}'): ").strip()
-        if waktu_selesai_baru:
-            try:
-                datetime.datetime.strptime(waktu_selesai_baru, '%H:%M')
-                kul['WaktuSelesai'] = waktu_selesai_baru
-            except:
-                print("Format waktu tidak valid. Edit dibatalkan.")
-                continue
-
-        if str_ke_waktu(kul['WaktuSelesai']) <= str_ke_waktu(kul['WaktuMulai']):
-            print("Waktu selesai harus setelah waktu mulai. Edit dibatalkan.")
-            continue
-
-        # Cek tumpang tindih dengan kuliah lain
-        tumpang_tindih_ditemukan = False
-        for k in kuliah:
-            if k['IDMataKuliah'] != kul['IDMataKuliah'] and k['Hari'] == kul['Hari']:
-                if tumpang_tindih(str_ke_waktu(kul['WaktuMulai']), str_ke_waktu(kul['WaktuSelesai']),
-                                str_ke_waktu(k['WaktuMulai']), str_ke_waktu(k['WaktuSelesai'])):
-                    print(f"Tumpang tindih dengan kuliah yang ada [{k['IDMataKuliah']}] {k['NamaMataKuliah']} {k['WaktuMulai']}–{k['WaktuSelesai']}")
-                    tumpang_tindih_ditemukan = True
-
-        if tumpang_tindih_ditemukan:
-            print("Edit menghasilkan kuliah yang tumpang tindih. Edit dibatalkan.")
-            continue
-
-        # Simpan perubahan ke file dan keluar loop
-        simpan_kuliah(kuliah)
-        print("Kuliah berhasil diedit.")
-        input("Tekan Enter untuk melanjutkan...")
-        break
-
-def reset_id_kuliah():
-    global kuliah
-    for i, k in enumerate(kuliah, start=1):
-        k['IDMataKuliah'] = i
-    simpan_kuliah(kuliah)
-            
-def hapus_kuliah():
-    global kuliah
-    while True:
-        try:
-            id_kuliah = int(input("Masukkan ID kuliah untuk dihapus: "))
-        except ValueError:
-            print("ID tidak valid.")
-            continue
-
-        sebelum_len = len(kuliah)
-        kuliah = [k for k in kuliah if k['IDMataKuliah'] != id_kuliah]
-
-        if len(kuliah) == sebelum_len:
-            print("ID kuliah tidak ditemukan.")
-        else:
-            reset_id_kuliah()
-            print(f"Kuliah ID {id_kuliah} berhasil dihapus.")
-            input("Tekan Enter untuk melanjutkan...")  # Jeda disini sebelum keluar loop
-            break  # keluar dari loop setelah berhasil hapus dan jeda
-
-
 ################################################### M E N U M A H A S I S W A #########################################################
 def menu_mahasiswa(username_mahasiswa):
     global tugas, kuliah
@@ -607,7 +471,7 @@ def menu_mahasiswa(username_mahasiswa):
     kuliah_hari_ini.sort(key=lambda x: str_ke_waktu(x['WaktuMulai']))
 
     cetak_garis()
-    print(f"MENU MAHASISWA - Manajemen Tugas (Hari ini adalah hari {hari})")
+    print(f"MENU MAHASISWA - Manajemen Tugas (Hari ini adalah {hari})")
     print("Jadwal Kuliah Hari Ini:")
     if not kuliah_hari_ini:
         print("  Tidak ada kuliah hari ini.")
@@ -643,17 +507,11 @@ def menu_mahasiswa(username_mahasiswa):
                 tambah_tugas()
             elif pilih == 3:
                 clear()
-                edit_tugas()
+                tandai_tugas_sebagai_selesai()
             elif pilih == 4:
                 clear()
-                hapus_tugas()
-            elif pilih == 5:
-                clear()
-                tandai_tugas_sebagai_selesai()
-            elif pilih == 6:
-                clear()
                 jadwalkan_tugas_otomatis(kuliah_hari_ini)
-            elif pilih == 7:
+            elif pilih == 5:
                 clear()
                 halaman_knackplan()
                 break
@@ -729,73 +587,6 @@ def tambah_tugas():
     print(f"Tugas '{nama_tugas}' ditambahkan dengan ID {id_tugas_baru}.")
     input("Tekan Enter untuk melanjutkan...")
 
-
-def edit_tugas():
-    tugas = muat_tugas()
-    while True:
-        try:
-            id_tugas = int(input("Masukkan ID tugas untuk diedit: "))
-        except:
-            print("ID tidak valid.")
-            continue
-        cocok = [t for t in tugas if t['IDTugas'] == id_tugas]
-        if not cocok:
-            print("Tugas tidak ditemukan.")
-            continue
-        t = cocok[0]
-        print(f"Mengedit Tugas [{t['IDTugas']}] {t['NamaTugas']} Durasi:{t['DurasiEstimasi']}h Tenggat:{t['Tenggat']} Status:{t['Status']}")
-        nama_baru = input(f"Nama baru (biarkan kosong untuk mempertahankan '{t['NamaTugas']}'): ").strip()
-        if nama_baru:
-            t['NamaTugas'] = nama_baru
-        durasi_baru = input(f"Durasi estimasi baru (biarkan kosong untuk mempertahankan {t['DurasiEstimasi']}): ").strip()
-        if durasi_baru:
-            try:
-                d = float(durasi_baru)
-                if d <= 0:
-                    print("Durasi harus positif. Edit dibatalkan.")
-                    continue
-                t['DurasiEstimasi'] = d
-            except:
-                print("Durasi tidak valid. Edit dibatalkan.")
-                continue
-        tenggat_baru = input(f"Tenggat baru (YYYY-MM-DD, kosong untuk mempertahankan '{t['Tenggat']}'): ").strip()
-        if tenggat_baru:
-            try:
-                datetime.datetime.strptime(tenggat_baru, '%Y-%m-%d')
-                t['Tenggat'] = tenggat_baru
-            except:
-                print("Format tanggal tidak valid. Edit dibatalkan.")
-                continue
-        status_baru = input(f"Status (Pending/Selesai), kosong untuk mempertahankan '{t['Status']}': ").strip().capitalize()
-        if status_baru:
-            if status_baru not in ['Pending', 'Selesai']:
-                print("Status tidak valid. Edit dibatalkan.")
-                continue
-            t['Status'] = status_baru
-        simpan_tugas(tugas)
-        print("Tugas berhasil diedit.")
-        bersihkan_tugas_selesai()  # Hapus yang selesai segera
-        input("Tekan Enter untuk melanjutkan...")
-        break
-
-def hapus_tugas():
-    tugas = muat_tugas()  
-    while True:
-        try:
-            id_tugas = int(input("Masukkan ID tugas untuk dihapus: "))
-        except:
-            print("ID tidak valid.")
-            continue
-        sebelum_len = len(tugas)
-        tugas = [t for t in tugas if t['IDTugas'] != id_tugas]
-        if len(tugas) == sebelum_len:
-            print("ID tugas tidak ditemukan.")
-        else:
-            simpan_tugas(tugas)
-            print(f"Tugas ID {id_tugas} berhasil dihapus.")
-            input("Tekan Enter untuk melanjutkan...")
-            break
-
 def tandai_tugas_sebagai_selesai():
     tugas = muat_tugas()
     while True :
@@ -868,9 +659,10 @@ def jadwalkan_tugas_otomatis(kuliah_hari_ini):
         et = waktu_ke_str(ev[3])
         label = "📘 Kuliah" if ev[0] == 'Kuliah' else "📝 Tugas"
         print(f"  [{label}] {ev[1]} dari {st} sampai {et}")
+
     input("Tekan Enter untuk kembali...")
 
-def knapsack_01(tugas, kapasitas_jam):
+def knapsack_01(tugas: List[dict], kapasitas_jam: float) -> List[dict]:
     kapasitas = int(kapasitas_jam * 10)
     n = len(tugas)
     today = datetime.date.today()
@@ -906,7 +698,7 @@ def knapsack_01(tugas, kapasitas_jam):
     return list(reversed(hasil))
 
 
-def ambil_interval_bebas(kuliah):
+def ambil_interval_bebas(kuliah: List[dict]):
     WAKTU_MULAI_HARI = datetime.time(6, 0)
     WAKTU_SELESAI_HARI = datetime.time(22, 0)
     if not kuliah:
@@ -924,7 +716,7 @@ def ambil_interval_bebas(kuliah):
         interval_bebas.append((str_ke_waktu(kuliah_terurut[-1]['WaktuSelesai']), WAKTU_SELESAI_HARI))
     return interval_bebas
 
-def durasi_dalam_jam(mulai, selesai):
+def durasi_dalam_jam(mulai: datetime.time, selesai: datetime.time):
     dt1 = datetime.datetime.combine(datetime.date.today(), mulai)
     dt2 = datetime.datetime.combine(datetime.date.today(), selesai)
     selisih = dt2 - dt1
@@ -936,7 +728,7 @@ def tambah_jam(mulai: datetime.time, jam: float):
     dt_selesai = dt + delta
     return dt_selesai.time()
 
-def jadwal_knapsack(interval_bebas, tugas):
+def jadwal_knapsack(interval_bebas: List[Tuple[datetime.time, datetime.time]], tugas: List[dict]):
     tugas_terurut = sorted(tugas, key=lambda x: x['DurasiEstimasi'], reverse=True)
     jadwal = []
     slot_bebas = [(mulai, selesai, durasi_dalam_jam(mulai, selesai)) for (mulai, selesai) in interval_bebas]
